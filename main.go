@@ -11,11 +11,14 @@ import (
 	geopb "github.com/pondohva/profile/proto/geoip"
 	pb "github.com/pondohva/profile/proto/profile"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 )
 
 func getGeoData(ctx context.Context) (*geopb.GetGeoDataByIPResponse, error) {
 	conn, err := grpc.Dial(Cfg.GeoIP, grpc.WithInsecure())
+	md, _ := metadata.FromIncomingContext(ctx)
+	ip := md["x-forwarded-for"][0]
 
 	if err != nil {
 		return nil, fmt.Errorf("can't connect to geodata %v", err)
@@ -24,7 +27,8 @@ func getGeoData(ctx context.Context) (*geopb.GetGeoDataByIPResponse, error) {
 
 	c := geopb.NewGeoipClient(conn)
 
-	r, err := c.GetGeoDataByIP(ctx, &geopb.GetGeoDataByIPRequest{})
+	r, err := c.GetGeoDataByIP(ctx, &geopb.GetGeoDataByIPRequest{IP: ip})
+
 	if err != nil {
 		return nil, fmt.Errorf("can't return geodata %v", err)
 	}
@@ -50,7 +54,6 @@ func (s *server) GetProfile(ctx context.Context, in *pb.GetProfileByIDRequest) (
 
 	geodata, err := getGeoData(ctx)
 
-	glog.Infof("context: %v", ctx)
 	if err != nil {
 		return nil, err
 	}

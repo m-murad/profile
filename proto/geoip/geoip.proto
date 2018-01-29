@@ -2,13 +2,13 @@ syntax = "proto3";
 
 package geoip;
 
-option go_package = "geoip";
-
 service Geoip {
     rpc GetGeoDataByIP(GetGeoDataByIPRequest) returns (GetGeoDataByIPResponse) {}
 }
 
-message GetGeoDataByIPRequest {}
+message GetGeoDataByIPRequest {
+    string IP = 1;
+}
 
 message GetGeoDataByIPResponse {
     string IP = 1;
