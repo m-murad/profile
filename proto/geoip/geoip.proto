@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package geoip;
+
+option go_package = "geoip";
+
+service Geoip {
+    rpc GetGeoDataByIP(GetGeoDataByIPRequest) returns (GetGeoDataByIPResponse) {}
+}
+
+message GetGeoDataByIPRequest {}
+
+message GetGeoDataByIPResponse {
+    string IP = 1;
+    string CountryCode = 2;
+    string CountryName = 3;
+    string City  = 4;
+    string ZipCode = 5;
+    string TimeZone = 6;
+    float Latitude = 7;
+    float Longitude = 8;
+    uint64 MetroCode = 9;
+    string RegionCode = 10;
+    string RegionName = 11;
+}
