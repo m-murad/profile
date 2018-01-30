@@ -2,12 +2,14 @@ syntax = "proto3";
 
 package geoip;
 
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
 service Geoip {
     rpc GetGeoDataByIP(GetGeoDataByIPRequest) returns (GetGeoDataByIPResponse) {}
 }
 
 message GetGeoDataByIPRequest {
-    string IP = 1;
+    string IP = 1 [(validator.field) = {regex: "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$"}];
 }
 
 message GetGeoDataByIPResponse {

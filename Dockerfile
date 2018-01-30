@@ -7,7 +7,8 @@ ADD . .
 RUN go get -u google.golang.org/grpc && go get -u google.golang.org/grpc/metadata
 RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
     go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+    go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+    go get -u github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
 RUN make proto
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-w' -o profile
 

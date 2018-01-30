@@ -1,0 +1,3 @@
+profile
+proto/*/*.pb.go
+proto/*/*.pb.gw.go

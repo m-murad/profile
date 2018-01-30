@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	// "context"
 	"flag"
 	"fmt"
 	"net"
@@ -10,13 +10,14 @@ import (
 	"github.com/golang/glog"
 	geopb "github.com/pondohva/profile/proto/geoip"
 	pb "github.com/pondohva/profile/proto/profile"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 )
 
 func getGeoData(ctx context.Context) (*geopb.GetGeoDataByIPResponse, error) {
-	conn, err := grpc.Dial(Cfg.GeoIP, grpc.WithInsecure())
+	conn, err := grpc.DialContext(ctx, Cfg.GeoIP, grpc.WithInsecure())
 	md, _ := metadata.FromIncomingContext(ctx)
 	ip := md["x-forwarded-for"][0]
 
@@ -41,6 +42,8 @@ func getUserName(ctx context.Context) string {
 
 type server struct{}
 
+type myCtxKey string
+
 type config struct {
 	GeoIP   string `env:"GIZMO_GEOIP_URL"`
 	Address string `env:"GIZMO_PROFILE_ADDRESS" envDefault:"0.0.0.0"`
@@ -51,6 +54,8 @@ type config struct {
 var Cfg config
 
 func (s *server) GetProfile(ctx context.Context, in *pb.GetProfileByIDRequest) (*pb.GetProfileByIDResponse, error) {
+
+	ctx = metadata.NewOutgoingContext(ctx, (metadata.Pairs("gizmo-sample-key", "42")))
 
 	geodata, err := getGeoData(ctx)
 
